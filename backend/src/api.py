@@ -15,7 +15,7 @@ CORS(app)
 
 # ROUTES
 '''
-@TODO implement endpoint
+@OK implement endpoint
     GET /drinks
         it should be a public endpoint
         it should contain only the drink.short() data representation
