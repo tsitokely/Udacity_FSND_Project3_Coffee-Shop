@@ -11,13 +11,7 @@ app = Flask(__name__)
 setup_db(app)
 CORS(app)
 
-'''
-@TODO uncomment the following line to initialize the datbase
-!! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
-!! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
-!! Running this funciton will add one
-'''
-# db_drop_and_create_all()
+#db_drop_and_create_all()
 
 # ROUTES
 '''
@@ -28,6 +22,22 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.route("/drinks")
+def retrieve_drinks():
+    try:
+        all_drinks = Drink.query.all()
+
+        return jsonify(
+            {
+                    "success": True,
+                    "drinks": [drink.short() for drink in all_drinks]
+            }
+            )
+    except:
+        raise AuthError({
+            'code': 'Database error',
+            'description': 'Database error.'
+        }, 500)
 
 
 '''

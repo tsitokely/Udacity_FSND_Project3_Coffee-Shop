@@ -5,6 +5,7 @@ test.db
 Lib/
 Scripts/
 pyvenv.cfg
+Include/
 
 # OS generated files #
 ######################
