@@ -1,3 +1,4 @@
+from logging import raiseExceptions
 import os
 from flask import Flask, request, jsonify, abort
 from sqlalchemy import exc
@@ -57,15 +58,12 @@ def retrieve_drinks_details(jwt):
                     "drinks": [drink.long() for drink in all_drinks]
             }
             )
-    except Exception as e:
-        raise AuthError({
-            'code': 'Database error',
-            'description': 'Database error.'
-        }, 500)
+    except:
+        abort(500)
 
 
 '''
-@TODO implement endpoint
+@OK implement endpoint
     POST /drinks
         it should create a new row in the drinks table
         it should require the 'post:drinks' permission
@@ -73,7 +71,33 @@ def retrieve_drinks_details(jwt):
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route("/drinks", methods=["POST"])
+@requires_auth('post:drinks')
 
+def create_drink(json):
+    body = request.get_json()
+
+    new_title = body.get("title", None)
+    new_recipe = str('"')+str(body.get("recipe", None))+str('"') #TODO - change during front end implementation
+
+    try:
+        new_drink = Drink(
+        title = new_title,
+        recipe = new_recipe
+                    )
+        print(new_title)
+        new_drink.insert()
+
+        return jsonify(
+            {
+                "success": True,
+                "created": new_drink.id,
+                "drinks": new_drink.long(),
+            }
+        )
+    except Exception as e:
+        print(e)
+        abort(422)
 
 '''
 @TODO implement endpoint
