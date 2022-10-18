@@ -50,7 +50,6 @@ def check_permissions(permission, payload):
     if 'permissions' not in payload:
         abort(400)
     if permission not in payload['permissions']:
-        print(permission)
         abort(403)
     return True
 
@@ -115,7 +114,6 @@ def requires_auth(permission=''):
             try:
                 payload = verify_decode_jwt(jwt)
             except:
-                print(2)
                 abort(401)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
