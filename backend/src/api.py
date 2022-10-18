@@ -117,7 +117,6 @@ def update_drink(json,drink_id):
     print(drink_id)
     try:
         selected_drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
-        print(selected_drink)
         if selected_drink is None:
             abort(404)
         if "title" in body:
@@ -149,6 +148,25 @@ def update_drink(json,drink_id):
         or appropriate status code indicating reason for failure
 '''
 
+@app.route("/drinks/<int:drink_id>", methods=["DELETE"])
+@requires_auth('delete:drinks')
+def delete_book(json,drink_id):
+    try:
+        selected_drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
+
+        if selected_drink is None:
+            abort(404)
+
+        selected_drink.delete()
+
+        return jsonify(
+            {
+                "success": True,
+                "deleted": drink_id,
+            }
+        )
+    except:
+        abort(422)
 
 # Error Handling
 '''
