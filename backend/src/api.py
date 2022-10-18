@@ -34,10 +34,7 @@ def retrieve_drinks():
             }
             )
     except:
-        raise AuthError({
-            'code': 'Database error',
-            'description': 'Database error.'
-        }, 500)
+        abort(500)
 
 
 '''
@@ -60,7 +57,7 @@ def retrieve_drinks_details(jwt):
                     "drinks": [drink.long() for drink in all_drinks]
             }
             )
-    except:
+    except Exception as e:
         raise AuthError({
             'code': 'Database error',
             'description': 'Database error.'
@@ -119,7 +116,7 @@ def unprocessable(error):
 
 
 '''
-@TODO implement error handlers using the @app.errorhandler(error) decorator
+@OK implement error handlers using the @app.errorhandler(error) decorator
     each error handler should return (with approprate messages):
              jsonify({
                     "success": False,
@@ -128,14 +125,67 @@ def unprocessable(error):
                     }), 404
 
 '''
+@app.errorhandler(400)
+def bad_request(error):
+    return jsonify(
+        {
+            "success": False,
+            "error": 400,
+            "message": "bad request"
+        }
+        ), 400
 
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return jsonify(
+        {
+            "success": False,
+            "error": 405,
+            "message": "method not allowed"
+        }
+        ), 405
+
+@app.errorhandler(422)
+def unprocessable(error):
+    return jsonify(
+        {
+            "success": False,
+            "error": 422,
+            "message": "unprocessable"
+        }
+        ), 422
+
+@app.errorhandler(500)
+def server_error(error):
+    return jsonify({
+        "success": False,
+        "error": 500,
+        "message": "There was an issue with the server. Please contact the administrator"
+    }), 500
 '''
-@TODO implement error handler for 404
+@OK implement error handler for 404
     error handler should conform to general task above
 '''
-
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify(
+        {
+            "success": False,
+            "error": 404,
+            "message": "resource not found"
+        }
+        ), 404
 
 '''
-@TODO implement error handler for AuthError
+@OK implement error handler for AuthError
     error handler should conform to general task above
 '''
+@app.errorhandler(AuthError)
+def unprocessable(error):
+    return jsonify({
+            'Error type': 'Authentification error',
+            'description': 'Your request has authorization issues',
+            'Authorization error status': str(error.status_code),
+            'Authorization error code': str(error.error['code']),
+            'Authorization error desc': str(error.error['description'])
+        })
