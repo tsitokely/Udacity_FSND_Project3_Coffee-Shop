@@ -34,7 +34,8 @@ def retrieve_drinks():
                     "drinks": [drink.short() for drink in all_drinks]
             }
             )
-    except:
+    except Exception as e:
+        print(e)
         abort(500)
 
 
@@ -58,7 +59,8 @@ def retrieve_drinks_details(jwt):
                     "drinks": [drink.long() for drink in all_drinks]
             }
             )
-    except:
+    except Exception as e:
+        print(e)
         abort(500)
 
 
@@ -85,7 +87,6 @@ def create_drink(json):
         title = new_title,
         recipe = new_recipe
                     )
-        print(new_title)
         new_drink.insert()
 
         return jsonify(
@@ -114,7 +115,6 @@ def create_drink(json):
 @requires_auth('patch:drinks')
 def update_drink(json,drink_id):
     body = request.get_json()
-    print(drink_id)
     try:
         selected_drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
         if selected_drink is None:
