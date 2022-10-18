@@ -2,7 +2,7 @@ from logging import raiseExceptions
 import os
 from flask import Flask, request, jsonify, abort
 from sqlalchemy import exc
-import json
+import json as js
 from flask_cors import CORS
 
 from .database.models import db_drop_and_create_all, setup_db, Drink
@@ -76,7 +76,7 @@ def create_drink(json):
     body = request.get_json()
 
     new_title = body.get("title", None)
-    new_recipe = str('"')+str(body.get("recipe", None))+str('"') #TODO - change during front end implementation
+    new_recipe = js.dumps(body.get("recipe", None))
 
     try:
         new_drink = Drink(
