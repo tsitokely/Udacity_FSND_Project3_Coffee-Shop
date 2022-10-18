@@ -25,7 +25,7 @@ CORS(app)
 '''
 @app.route("/drinks")
 def retrieve_drinks():
-    all_drinks = Drink.query.order_by(Drink.id).all()
+    all_drinks = Drink.query.all()
     short_desc = [drink.short() for drink in all_drinks]
 
     return jsonify(
@@ -49,16 +49,18 @@ def retrieve_drinks():
 def retrieve_drinks_details(json):
     try:
         all_drinks = Drink.query.all()
+        long_desc = [drink.long() for drink in all_drinks]
 
         return jsonify(
             {
                     "success": True,
-                    "drinks": [drink.long() for drink in all_drinks]
+                    "drinks": long_desc
             }
             )
     except Exception as e:
+        print(1000)
         print(e)
-        abort(501)
+        abort(500)
 
 
 '''
@@ -89,7 +91,7 @@ def create_drink(json):
             {
                 "success": True,
                 "created": new_drink.id,
-                "drinks": new_drink.long(),
+                "drinks": [new_drink.long()],
             }
         )
     except Exception as e:
@@ -116,9 +118,8 @@ def update_drink(json,drink_id):
         if selected_drink is None:
             abort(404)
         if "title" in body:
-            selected_drink.title = body.get("title")
-        elif "recipe" in body:
-            selected_drink.recipe = body.get("recipe")
+            selected_drink.title = str(body.get("title"))
+            selected_drink.recipe = js.dumps(body.get("recipe"))
         else:
             abort(404)
         selected_drink.update()
