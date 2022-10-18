@@ -16,8 +16,13 @@ We recommend working within a virtual environment whenever using Python for proj
 
 Once you have your virtual environment setup and running, install dependencies by naviging to the `/backend` directory and running:
 
+#### For Unix based machine (Bash)
 ```bash
 pip install -r requirements.txt
+```
+#### For Windows (Powershell)
+```Powershell
+pip install -r .\requirements.txt
 ```
 
 This will install all of the required packages we selected within the `requirements.txt` file.
@@ -30,28 +35,9 @@ This will install all of the required packages we selected within the `requireme
 
 - [jose](https://python-jose.readthedocs.io/en/latest/) JavaScript Object Signing and Encryption for JWTs. Useful for encoding, decoding, and verifying JWTS.
 
-## Running the server
-
-From within the `./src` directory first ensure you are working using your created virtual environment.
-
-Each time you open a new terminal session, run:
-
-```bash
-export FLASK_APP=api.py;
-```
-
-To run the server, execute:
-
-```bash
-flask run --reload
-```
-
-The `--reload` flag will detect file changes and restart the server automatically.
-
-## Tasks
-
-### Setup Auth0
-
+### Auth0 and configuration
+This application uses Auth0 as a third party authentification
+#### Setup Auth0
 1. Create a new Auth0 Account
 2. Select a unique tenant domain
 3. Create a new, single page web application
@@ -71,17 +57,43 @@ The `--reload` flag will detect file changes and restart the server automaticall
      - can `get:drinks`
    - Manager
      - can perform all actions
-7. Test your endpoints with [Postman](https://getpostman.com).
-   - Register 2 users - assign the Barista role to one and Manager role to the other.
-   - Sign into each account and make note of the JWT.
-   - Import the postman collection `./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json`
-   - Right-clicking the collection folder for barista and manager, navigate to the authorization tab, and including the JWT in the token field (you should have noted these JWTs).
-   - Run the collection and correct any errors.
-   - Export the collection overwriting the one we've included so that we have your proper JWTs during review!
 
-### Implement The Server
+#### Setup .env file
+Setup the auth0 connection information in the `.env` file inside the `backend/src/auth` directory:
+```
+# settings
+AUTH0_DOMAIN= 
+API_AUDIENCE=
+```
 
-There are `@TODO` comments throughout the `./backend/src`. We recommend tackling the files in order and from top to bottom:
+> Below the description of each environment variable:
+> 
+> `AUTH0_DOMAIN`: the domain name for auth0
+> 
+> `API_AUDIENCE`: the API name on auth0
+> 
 
-1. `./src/auth/auth.py`
-2. `./src/api.py`
+## Running the server
+
+From within the `backend/src` directory first ensure you are working using your created virtual environment.
+Each time you open a new terminal session, setup the following environment variables:
+#### For Unix based machine (Bash)
+```bash
+export FLASK_APP=api.py
+```
+#### For Windows (Powershell)
+```Powershell
+$env:FLASK_APP="api.py"
+```
+
+To run the server, execute:
+
+#### For all types of shell
+```shell
+flask run --reload
+```
+
+The `--reload` flag will detect file changes and restart the server automatically.
+
+## API documentation
+[View the API.md within ./backend for more details.](./API.md)
