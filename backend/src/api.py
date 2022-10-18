@@ -12,7 +12,7 @@ app = Flask(__name__)
 setup_db(app)
 CORS(app)
 
-#db_drop_and_create_all()
+# db_drop_and_create_all()
 
 # ROUTES
 '''
@@ -25,18 +25,15 @@ CORS(app)
 '''
 @app.route("/drinks")
 def retrieve_drinks():
-    try:
-        all_drinks = Drink.query.all()
+    all_drinks = Drink.query.order_by(Drink.id).all()
+    short_desc = [drink.short() for drink in all_drinks]
 
-        return jsonify(
-            {
-                    "success": True,
-                    "drinks": [drink.short() for drink in all_drinks]
-            }
-            )
-    except Exception as e:
-        print(e)
-        abort(500)
+    return jsonify(
+        {
+                "success": True,
+                "drinks": short_desc,
+        }
+        )
 
 
 '''
@@ -49,7 +46,7 @@ def retrieve_drinks():
 '''
 @app.route("/drinks-detail")
 @requires_auth('get:drinks-detail')
-def retrieve_drinks_details(jwt):
+def retrieve_drinks_details(json):
     try:
         all_drinks = Drink.query.all()
 
@@ -61,7 +58,7 @@ def retrieve_drinks_details(jwt):
             )
     except Exception as e:
         print(e)
-        abort(500)
+        abort(501)
 
 
 '''
@@ -75,7 +72,6 @@ def retrieve_drinks_details(jwt):
 '''
 @app.route("/drinks", methods=["POST"])
 @requires_auth('post:drinks')
-
 def create_drink(json):
     body = request.get_json()
 
@@ -130,7 +126,7 @@ def update_drink(json,drink_id):
         return jsonify(
             {
                 "success": True,
-                "drinks": selected_drink.long(),
+                "drinks": [selected_drink.long()],
             }
         )
     except Exception as e:
@@ -138,7 +134,7 @@ def update_drink(json,drink_id):
         abort(422)
 
 '''
-@TODO implement endpoint
+@OK implement endpoint
     DELETE /drinks/<id>
         where <id> is the existing model id
         it should respond with a 404 error if <id> is not found
@@ -203,6 +199,16 @@ def bad_request(error):
         }
         ), 400
 
+@app.errorhandler(401)
+def bad_request(error):
+    return jsonify(
+        {
+            "success": False,
+            "error": 401,
+            "message": "Unauthorized"
+        }
+        ), 401
+
 @app.errorhandler(405)
 def method_not_allowed(error):
     return jsonify(
@@ -253,7 +259,7 @@ def unprocessable(error):
     return jsonify({
             'Error type': 'Authentification error',
             'description': 'Your request has authorization issues',
-            'Authorization error status': str(error.status_code),
+            'Status': str(error.status_code),
             'Authorization error code': str(error.error['code']),
             'Authorization error desc': str(error.error['description'])
         })
