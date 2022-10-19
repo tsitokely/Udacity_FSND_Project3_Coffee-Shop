@@ -278,4 +278,4 @@ def auth_error(error):
             'Status': str(error.status_code),
             'Authorization error code': str(error.error['code']),
             'Authorization error desc': str(error.error['description'])
-        })
+        }, error.status_code)
